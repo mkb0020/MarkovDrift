@@ -29,6 +29,27 @@ export class Renderer {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  followCar(car, delta) {
+    const cameraOffset = new THREE.Vector3(0, 3, 8);
+    cameraOffset.applyAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      car.rotationY
+    );
+
+    const targetPosition = car.position.clone().add(cameraOffset);
+
+    this.camera.position.lerp(targetPosition, 5 * delta);
+
+    const lookAtTarget = car.position.clone().add(
+      new THREE.Vector3(0, 1, -5).applyAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        car.rotationY
+      )
+    );
+
+    this.camera.lookAt(lookAtTarget);
+  }
+
   render(scene) {
     this.renderer.render(scene, this.camera);
   }
