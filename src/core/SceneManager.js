@@ -1,34 +1,17 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { Car } from "../entities/Car.js";
+import { RoadSystem } from "../world/RoadSystem.js";
 
 export class SceneManager {
+  constructor() {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x000000);
 
-addGroundGrid() {
-  const size = 200;
-  const divisions = 40;
+    this.setupFog();
 
-  const grid = new THREE.GridHelper(
-    size,
-    divisions,
-    0x00ffff,
-    0x00ffff
-  );
-
-  grid.position.y = -1;
-  this.scene.add(grid);
-}
-
-
-constructor() {
-  this.scene = new THREE.Scene();
-  this.scene.background = new THREE.Color(0x000000);
-
-  this.setupFog();
-  this.addGroundGrid();
-
-  this.car = new Car(this.scene);
-}
-
+    this.car = new Car(this.scene);
+    this.road = new RoadSystem(this.scene, this.car);
+  }
 
   setupFog() {
     this.scene.fog = new THREE.FogExp2(0x000000, 0.08);
@@ -36,7 +19,6 @@ constructor() {
 
   update(delta) {
     this.car.update(delta);
+    this.road.update();
   }
 }
-
-
