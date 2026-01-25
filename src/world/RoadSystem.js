@@ -1,5 +1,6 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { RoadSegment } from "./RoadSegment.js";
+import { CurvedRoadSegment } from "./CurvedRoadSegment.js";
 import { WorldConfig } from "./WorldConfig.js";
 
 export class RoadSystem {
@@ -53,7 +54,10 @@ export class RoadSystem {
         return true;
       }
       
-      if (this.segments.length > visibleSegmentsAhead + 5) {
+      const segmentsBehind = closestIndex - index;
+      const shouldKeep = segmentsBehind < 3 || this.segments.length < visibleSegmentsAhead + 10;
+      
+      if (!shouldKeep) {
         this.scene.remove(segment.group);
         return false;
       }

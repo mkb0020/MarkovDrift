@@ -26,10 +26,11 @@ export class RoadSegment {
     const lineMaterial = new THREE.LineBasicMaterial({
       color: roadColor,
       fog: true,
+      linewidth: 3, 
     });
 
-  
-    [-edgeThickness, edgeThickness].forEach(offset => {
+   
+    [-edgeThickness, 0, edgeThickness].forEach(offset => {
       const leftGeom = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(-halfWidth + offset, 0, 0),
         new THREE.Vector3(-halfWidth + offset, 0, -segmentLength),
@@ -52,7 +53,7 @@ export class RoadSegment {
         new THREE.Vector3(0, 0, dashEnd),
       ]);
 
-      [-edgeThickness, edgeThickness].forEach(offset => {
+      [-edgeThickness, 0, edgeThickness].forEach(offset => {
         const dash = new THREE.Line(dashGeom, lineMaterial);
         dash.position.x = offset;
         this.group.add(dash);
