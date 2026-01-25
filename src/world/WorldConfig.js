@@ -6,7 +6,7 @@ export const WorldConfig = {
   dashGap: 1.2,
   roadColor: 0x00ffff,
   visibleSegmentsAhead: 10,
-  removeDistanceBehind: 30,
-  maxTurnAngle: Math.PI / 2,
-  turnChance: { straight: 0.6, left: 0.2 }, 
+  removeDistanceBehind: 100,
+  maxTurnAngle: Math.PI / 12, 
+  turnChance: { straight: 0.7, left: 0.15 }, 
 };

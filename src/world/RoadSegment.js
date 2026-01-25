@@ -1,4 +1,3 @@
-// RoadSegment.js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { WorldConfig } from "./WorldConfig.js";
 
@@ -22,66 +21,48 @@ export class RoadSegment {
       roadColor,
     } = WorldConfig;
 
-    const edgeOffset = roadWidth / 2;
+    const halfWidth = roadWidth / 2;
 
-    const edgeMaterial = new THREE.LineBasicMaterial({
+    const lineMaterial = new THREE.LineBasicMaterial({
       color: roadColor,
       fog: true,
     });
 
-    const dashMaterial = new THREE.LineBasicMaterial({
-      color: roadColor,
-      fog: true,
-    });
-
+  
     [-edgeThickness, edgeThickness].forEach(offset => {
       const leftGeom = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-edgeOffset, 0, 0),
-        new THREE.Vector3(-edgeOffset, 0, segmentLength),
+        new THREE.Vector3(-halfWidth + offset, 0, 0),
+        new THREE.Vector3(-halfWidth + offset, 0, -segmentLength),
       ]);
+      this.group.add(new THREE.Line(leftGeom, lineMaterial));
 
-      const leftLine = new THREE.Line(leftGeom, edgeMaterial);
-      leftLine.position.x = offset;
-      this.group.add(leftLine);
-    });
-
-    [-edgeThickness, edgeThickness].forEach(offset => {
       const rightGeom = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(edgeOffset, 0, 0),
-        new THREE.Vector3(edgeOffset, 0, segmentLength),
+        new THREE.Vector3(halfWidth + offset, 0, 0),
+        new THREE.Vector3(halfWidth + offset, 0, -segmentLength),
       ]);
-
-      const rightLine = new THREE.Line(rightGeom, edgeMaterial);
-      rightLine.position.x = offset;
-      this.group.add(rightLine);
+      this.group.add(new THREE.Line(rightGeom, lineMaterial));
     });
 
     let z = 0;
-    while (z < segmentLength) {
+    while (z > -segmentLength) {
+      const dashEnd = Math.max(z - dashLength, -segmentLength);
+      
       const dashGeom = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, z),
-        new THREE.Vector3(0, 0, z + dashLength),
+        new THREE.Vector3(0, 0, dashEnd),
       ]);
 
       [-edgeThickness, edgeThickness].forEach(offset => {
-        const dash = new THREE.Line(dashGeom, dashMaterial);
+        const dash = new THREE.Line(dashGeom, lineMaterial);
         dash.position.x = offset;
         this.group.add(dash);
       });
 
-      z += dashLength + dashGap;
+      z -= (dashLength + dashGap);
     }
   }
 
   addTo(scene) {
     scene.add(this.group);
-  }
-
-  removeFrom(scene) {
-    scene.remove(this.group);
-  }
-
-  get mesh() {
-    return this.group;
   }
 }

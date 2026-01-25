@@ -9,70 +9,85 @@ export class RoadSystem {
 
     this.segments = [];
 
-    this.currentDirection = 0;
-    this.lastSegmentEnd = new THREE.Vector3(0, 0, 0);
+    this.roadDirection = 0;
+    this.roadEndPosition = new THREE.Vector3(0, 0, 0);
 
-    for (let i = 0; i < WorldConfig.visibleSegmentsAhead; i++) {
+    for (let i = 0; i < 15; i++) {
       this.addSegment();
-    }
-  }
-
-  addSegment() {
-    const length = WorldConfig.segmentLength;
-
-    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(
-      new THREE.Vector3(0, 1, 0),
-      this.currentDirection
-    );
-
-    const position = this.lastSegmentEnd.clone().add(
-      forward.multiplyScalar(length / 2)
-    );
-
-    const segment = new RoadSegment(position, this.currentDirection);
-    segment.addTo(this.scene);
-    this.segments.push(segment);
-
-    this.lastSegmentEnd.add(
-      forward.normalize().multiplyScalar(length)
-    );
-
-    this.chooseNextDirection();
-  }
-
-  chooseNextDirection() {
-    const r = Math.random();
-    const { straight, left } = WorldConfig.turnChance;
-
-    if (r < straight) return;
-
-    if (r < straight + left) {
-      this.currentDirection += WorldConfig.maxTurnAngle;
-    } else {
-      this.currentDirection -= WorldConfig.maxTurnAngle;
     }
   }
 
   update() {
-    while (
-      this.segments.length < WorldConfig.visibleSegmentsAhead
-    ) {
+    const { visibleSegmentsAhead, removeDistanceBehind } = WorldConfig;
+    
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+    
+    for (let i = 0; i < this.segments.length; i++) {
+      const dx = this.segments[i].group.position.x - this.car.position.x;
+      const dz = this.segments[i].group.position.z - this.car.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      
+      if (dist < closestDistance) {
+        closestDistance = dist;
+        closestIndex = i;
+      }
+    }
+    
+    let safetyCounter = 0;
+    while (safetyCounter < 20) {
+      const segmentsAhead = this.segments.length - closestIndex - 1;
+      
+      console.log(`Closest: ${closestIndex}, Total: ${this.segments.length}, Ahead: ${segmentsAhead}, Need: ${visibleSegmentsAhead}`);
+      
+      if (segmentsAhead >= visibleSegmentsAhead || this.segments.length >= 50) {
+        break;
+      }
+      
       this.addSegment();
+      safetyCounter++;
     }
 
-    this.segments = this.segments.filter((segment) => {
-      const dz = segment.mesh.position
-        .clone()
-        .sub(this.car.position)
-        .length();
-
-      if (dz > WorldConfig.removeDistanceBehind &&
-          segment.mesh.position.z > this.car.position.z) {
-        segment.removeFrom(this.scene);
+    this.segments = this.segments.filter((segment, index) => {
+      if (index >= closestIndex) {
+        return true;
+      }
+      
+      if (this.segments.length > visibleSegmentsAhead + 5) {
+        this.scene.remove(segment.group);
         return false;
       }
-
+      
       return true;
     });
+  }
+
+  addSegment() {
+    const { segmentLength, turnChance, maxTurnAngle } = WorldConfig;
+
+    const rand = Math.random();
+    let turnAmount = 0;
+
+    if (rand > turnChance.straight + turnChance.left) {
+      turnAmount = maxTurnAngle;
+    } else if (rand > turnChance.straight) {
+      turnAmount = -maxTurnAngle;
+    }
+
+    this.roadDirection += turnAmount;
+
+    const segment = new RoadSegment(
+      this.roadEndPosition.clone(),
+      this.roadDirection
+    );
+
+    segment.addTo(this.scene);
+    this.segments.push(segment);
+
+    const forward = new THREE.Vector3(0, 0, -1)
+      .applyAxisAngle(new THREE.Vector3(0, 1, 0), this.roadDirection)
+      .normalize();
+
+    this.roadEndPosition.add(forward.multiplyScalar(segmentLength));
   }
 }
