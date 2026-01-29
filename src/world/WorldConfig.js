@@ -8,11 +8,15 @@ export const WorldConfig = {
   dashGap: 1.2,
   roadColor: 0x00ffff,
   
-  shoulderWidth: 3, 
-  boundaryColor: 0xA55AFF, 
+
+  shoulderWidth: 3,  
+  boundaryColor: 0xA55AFF,  
+  
+ 
+  carMaxTurnAngle: 75, 
   
   visibleSegmentsAhead: 10,
   removeDistanceBehind: 100,
-  maxTurnAngle: Math.PI / 24, 
+  roadCurveAngle: Math.PI / 24,  
   turnChance: { straight: 0.5, left: 0.25 }, 
 };

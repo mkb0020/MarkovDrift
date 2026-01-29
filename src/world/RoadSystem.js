@@ -1,3 +1,5 @@
+//RoadSystem.js
+
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { RoadSegment } from "./RoadSegment.js";
 import { CurvedRoadSegment } from "./CurvedRoadSegment.js";
@@ -67,15 +69,15 @@ export class RoadSystem {
   }
 
   addSegment() {
-    const { segmentLength, turnChance, maxTurnAngle } = WorldConfig;
+    const { segmentLength, turnChance, roadCurveAngle } = WorldConfig;
 
     const rand = Math.random();
     let turnAmount = 0;
 
     if (rand > turnChance.straight + turnChance.left) {
-      turnAmount = maxTurnAngle;
+      turnAmount = roadCurveAngle;
     } else if (rand > turnChance.straight) {
-      turnAmount = -maxTurnAngle;
+      turnAmount = -roadCurveAngle;
     }
 
     this.roadDirection += turnAmount;

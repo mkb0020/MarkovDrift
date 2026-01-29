@@ -1,6 +1,8 @@
+// SceneManager.js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { Car } from "../entities/Car.js";
 import { RoadSystem } from "../world/RoadSystem.js";
+import { CollisionManager } from "../entities/CollisionManager.js";
 
 export class SceneManager {
   constructor() {
@@ -11,6 +13,7 @@ export class SceneManager {
 
     this.car = new Car(this.scene);
     this.road = new RoadSystem(this.scene, this.car);
+    this.collision = new CollisionManager(this.road, this.car);
   }
 
   setupFog() {
@@ -20,5 +23,6 @@ export class SceneManager {
   update(delta) {
     this.car.update(delta);
     this.road.update();
+    this.collision.update(delta);  
   }
 }
