@@ -10,7 +10,7 @@ export class Car {
 
     const geometry = new THREE.BoxGeometry(1.2, 0.6, 2.4);
     const material = new THREE.MeshBasicMaterial({
-      color: 0xff00ff, 
+      color: 0xff69b4, 
     });
 
     this.mesh = new THREE.Mesh(geometry, material);

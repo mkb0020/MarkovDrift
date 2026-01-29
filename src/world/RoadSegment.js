@@ -1,11 +1,15 @@
+// RoadSegment.js
+
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { WorldConfig } from "./WorldConfig.js";
+import { RoadBoundaries } from "./RoadBoundaries.js";
 
 export class RoadSegment {
   constructor(position, direction) {
     this.group = new THREE.Group();
 
     this.buildGeometry();
+    this.buildBoundaries();  
 
     this.group.position.copy(position);
     this.group.rotation.y = direction;
@@ -61,6 +65,12 @@ export class RoadSegment {
 
       z -= (dashLength + dashGap);
     }
+  }
+
+  buildBoundaries() {
+    const { segmentLength } = WorldConfig;
+    const boundaries = new RoadBoundaries(segmentLength);
+    this.group.add(boundaries.group);
   }
 
   addTo(scene) {

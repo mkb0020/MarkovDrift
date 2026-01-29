@@ -1,5 +1,7 @@
+// CurvedRoadSegment.js 
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { WorldConfig } from "./WorldConfig.js";
+import { CurvedRoadBoundaries } from "./CurvedRoadBoundaries.js";
 
 export class CurvedRoadSegment {
   constructor(position, startDirection, turnAngle) {
@@ -7,6 +9,7 @@ export class CurvedRoadSegment {
     this.turnAngle = turnAngle;
 
     this.buildGeometry(turnAngle);
+    this.buildBoundaries(turnAngle);  
 
     this.group.position.copy(position);
     this.group.rotation.y = startDirection;
@@ -80,6 +83,12 @@ export class CurvedRoadSegment {
         }
       }
     });
+  }
+
+  buildBoundaries(turnAngle) {
+    const { segmentLength } = WorldConfig;
+    const boundaries = new CurvedRoadBoundaries(segmentLength, turnAngle);
+    this.group.add(boundaries.group);
   }
 
   addTo(scene) {
