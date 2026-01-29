@@ -1,24 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no"
-  />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="screen-orientation" content="landscape">
+  <meta name="x5-orientation" content="landscape">
   <title>Markov Drift</title>
   <style>
-    body {
+    * {
       margin: 0;
-      overflow: hidden;
-      background: black;
+      padding: 0;
+      box-sizing: border-box;
     }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      /* Prevent touch actions that interfere with game */
+      touch-action: none;
+      /* Prevent text selection */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      /* Prevent tap highlight */
+      -webkit-tap-highlight-color: transparent;
+      /* Prevent callout menu on long press */
+      -webkit-touch-callout: none;
+    }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
     canvas {
       display: block;
+      width: 100%;
+      height: 100%;
+      /* Prevent canvas from being selectable */
+      touch-action: none;
     }
   </style>
 </head>
 <body>
-  <script type="module" src="./main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>

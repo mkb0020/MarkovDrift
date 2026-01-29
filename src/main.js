@@ -1,3 +1,5 @@
+// main.js
+
 import { Renderer } from "./core/Renderer.js";
 import { SceneManager } from "./core/SceneManager.js";
 import { Time } from "./core/Time.js";
@@ -5,6 +7,8 @@ import { Time } from "./core/Time.js";
 import { InputManager } from "./input/InputManager.js";
 import { TouchControls } from "./input/TouchControls.js";
 import { KeyboardControls } from "./input/KeyboardControls.js";
+
+import { MobileUI } from "./ui/MobileUI.js";
 
 const renderer = new Renderer();
 const sceneManager = new SceneManager();
@@ -14,18 +18,31 @@ const input = new InputManager();
 input.addSource(new TouchControls());
 input.addSource(new KeyboardControls());
 
+// GAME
+let gameRunning = false;
+
+// INITIALIZE MOBILE UI WITH START CALLBACK
+const mobileUI = new MobileUI(() => {
+  gameRunning = true;
+  console.log("Game started!");
+});
+
 function animate() {
   requestAnimationFrame(animate);
 
   const delta = time.update();
 
-  input.update();
-  sceneManager.car.steerInput = input.steer;
+  // ONLY UPDATE GAME WHILE RUNNING
+  if (gameRunning) {
+    input.update();
+    sceneManager.car.steerInput = input.steer;
 
-  sceneManager.update(delta);
+    sceneManager.update(delta);
 
-  renderer.followCar(sceneManager.car, delta);
-  renderer.updateDebugCamera(sceneManager.car);
+    renderer.followCar(sceneManager.car, delta);
+    renderer.updateDebugCamera(sceneManager.car);
+  }
+
   renderer.render(sceneManager.scene);
 }
 
